@@ -528,7 +528,11 @@ STBIDEF int   stbi_zlib_decode_noheader_buffer(char *obuffer, int olen, const ch
 
 #ifndef _MSC_VER
    #ifdef __cplusplus
-   #define stbi_inline inline
+      #ifdef __BORLANDC__
+        #define stbi_inline
+      #else
+        #define stbi_inline inline
+      #endif
    #else
    #define stbi_inline
    #endif
@@ -553,7 +557,7 @@ typedef int32_t  stbi__int32;
 // should produce compiler error if size is wrong
 typedef unsigned char validate_uint32[sizeof(stbi__uint32)==4 ? 1 : -1];
 
-#ifdef _MSC_VER
+#if defined(_MSC_VER) || defined(__BORLANDC__)
 #define STBI_NOTUSED(v)  (void)(v)
 #else
 #define STBI_NOTUSED(v)  (void)sizeof(v)
@@ -602,6 +606,11 @@ typedef unsigned char validate_uint32[sizeof(stbi__uint32)==4 ? 1 : -1];
 // exposed in GCC/Clang is, sadly, not really suited for one-file libs.
 // New behavior: if compiled with -msse2, we use SSE2 without any
 // detection; if not, we don't use it at all.
+#define STBI_NO_SIMD
+#endif
+
+#if defined(__BORLANDC__)
+//borland doesn't support sse2 intrinsics
 #define STBI_NO_SIMD
 #endif
 
